@@ -10,32 +10,80 @@
 
 <body>
     <video id="video" width="640" height="480" autoplay></video>
-    <button id="snap">Snap Photo</button>
+    <button id="record">Record</button>
     <canvas id="canvas" width="640" height="480"></canvas>
 
     <script type="text/javascript">
-        // Grab elements, create settings, etc.
-        var video = document.getElementById('video');
 
         // Get access to the camera!
+        // Make sure the video is HD
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            // Not adding `{ audio: true }` since we only want video now
-            navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
-                //video.src = window.URL.createObjectURL(stream);
+            navigator.mediaDevices.getUserMedia({
+                video: { width: { min: 1280 }, height: { min: 720 } },
+                audio: true
+            }).then(function (stream) {
                 video.srcObject = stream;
-                video.play();
             });
         }
 
-        // Elements for taking the snapshot
-        var canvas = document.getElementById('canvas');
-        var context = canvas.getContext('2d');
-        var video = document.getElementById('video');
+        const videoElement = document.querySelector('video');
+        const audioSelect = document.querySelector('select#audioSource');
+        const videoSelect = document.querySelector('select#videoSource');
 
-        // Trigger photo take
-        document.getElementById("snap").addEventListener("click", function () {
-            context.drawImage(video, 0, 0, 640, 480);
-        });
+        navigator.mediaDevices.enumerateDevices()
+            .then(gotDevices).then(getStream).catch(handleError);
+
+        audioSelect.onchange = getStream;
+        videoSelect.onchange = getStream;
+
+        function gotDevices(deviceInfos) {
+            for (let i = 0; i !== deviceInfos.length; ++i) {
+                const deviceInfo = deviceInfos[i];
+                const option = document.createElement('option');
+                option.value = deviceInfo.deviceId;
+                if (deviceInfo.kind === 'audioinput') {
+                    option.text = deviceInfo.label ||
+                        'microphone ' + (audioSelect.length + 1);
+                    audioSelect.appendChild(option);
+                } else if (deviceInfo.kind === 'videoinput') {
+                    option.text = deviceInfo.label || 'camera ' +
+                        (videoSelect.length + 1);
+                    videoSelect.appendChild(option);
+                } else {
+                    console.log('Found another kind of device: ', deviceInfo);
+                }
+            }
+        }
+
+        function getStream() {
+            if (window.stream) {
+                window.stream.getTracks().forEach(function (track) {
+                    track.stop();
+                });
+            }
+
+            const constraints = {
+                audio: {
+                    deviceId: { exact: audioSelect.value }
+                },
+                video: {
+                    deviceId: { exact: videoSelect.value }
+                }
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints).
+                then(gotStream).catch(handleError);
+        }
+
+        function gotStream(stream) {
+            window.stream = stream; // make stream available to console
+            videoElement.srcObject = stream;
+        }
+
+        function handleError(error) {
+            console.error('Error: ', error);
+        }
+
 
     </script>
 </body>
