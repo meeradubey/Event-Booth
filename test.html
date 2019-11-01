@@ -9,20 +9,29 @@
 
   <body>
     <main>
-      <!-- Displays what the webcam is seeing -->
-      <video id="videoCapture" width="640" height="480" autoplay></video>
+      <div id="camera-view-1" style="display: inline;">
+        <!-- Displays what the webcam is seeing -->
+        <video id="videoCapture" autoplay></video>
+        <!-- start recording button -->
+        <p><button id="btnStart">Record</button></p>
+        <!-- stop recording button -->
+        <p><button id="btnStop">Stop</button></p>
+      </div>
 
-      <!-- start recording button -->
-      <p><button id="btnStart">Record</button></p>
-
-      <!-- stop recording button -->
-      <p><button id="btnStop">Stop</button></p>
-
-      <!-- Displays the captured recording -->
-      <video id="videoDisplay" controls></video>
+      <div id="camera-view-2" style="display: none;">
+        <!-- Displays the captured recording -->
+        <video id="videoDisplay" controls></video>
+        <!-- will eventually send to database - still working on it -->
+        <p><button id="btnSave">Save</button></p>
+        <!-- do over (starts recording process again) -->
+        <p><button id="btnRedo">Redo</button></p>
+      </div>
     </main>
 
     <script>
+      //Store Video IDs
+      const videoIDs = [];
+
       //binding querySelectors to $ and $$
       const $ = document.querySelector.bind(document);
       const $$ = document.querySelectorAll.bind(document);
@@ -31,6 +40,8 @@
       const constraintObj = {
         audio: true,
         video: {
+          //grabs the front camera instead of the back camera if opened on a mobile device
+          facingMode: "user",
           //setting min and ideal resolution
           width: { min: 640, ideal: 1280, max: 1920 },
           height: { min: 480, ideal: 720, max: 1080 }
@@ -87,8 +98,12 @@
           //add listeners for saving video/audio
           const $start = $("#btnStart");
           const $stop = $("#btnStop");
+          const $save = $("#btnSave");
+          const $redo = $("#btnRedo");
           const $videoDisplay = $("#videoDisplay");
           const mediaRecorder = new MediaRecorder(mediaStreamObj);
+
+          //Store the media stream video chunks (resets every time so only one video is stored locally)
           const chunks = [];
 
           $start.addEventListener("click", ev => {
@@ -99,31 +114,31 @@
             mediaRecorder.stop();
             console.log(mediaRecorder.state);
           });
+          $save.addEventListener("click", ev => {
+            alert("Save Button Pressed");
+            console.log(mediaRecorder.state, mediaStreamObj.id, mediaStreamObj);
+          });
+          $redo.addEventListener("click", ev => {
+            $("#camera-view-1").style.display = "inline";
+            $("#camera-view-2").style.display = "none";
+            console.log(mediaRecorder.state);
+          });
           mediaRecorder.ondataavailable = function(ev) {
             chunks.push(ev.data);
           };
           mediaRecorder.onstop = ev => {
+            $("#camera-view-1").style.display = "none";
             const blob = new Blob(chunks, { type: "video/mp4;" });
             chunks.length = 0;
             const videoURL = window.URL.createObjectURL(blob);
+            $("#camera-view-2").style.display = "inline";
             $videoDisplay.src = videoURL;
+            console.log(blob);
           };
         })
         .catch(function(err) {
           console.log(err.name, err.message);
         });
-
-      /*********************************
-              getUserMedia returns a Promise
-              resolve - returns a MediaStream Object
-              reject returns one of the following errors
-              AbortError - generic unknown cause
-              NotAllowedError (SecurityError) - user rejected permissions
-              NotFoundError - missing media track
-              NotReadableError - user permissions given but hardware/OS error
-              OverconstrainedError - constraint video settings preventing
-              TypeError - audio: false, video: false
-              *********************************/
     </script>
   </body>
 </html>
