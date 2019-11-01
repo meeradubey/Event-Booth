@@ -1,91 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Test</title>
-</head>
+  </head>
 
-<body>
-    <video id="video" width="640" height="480" autoplay></video>
-    <button id="record">Record</button>
-    <canvas id="canvas" width="640" height="480"></canvas>
+  <body>
+    <main>
+      <!-- Displays what the webcam is seeing -->
+      <video id="videoCapture" width="640" height="480" autoplay></video>
 
-    <script type="text/javascript">
+      <!-- start recording button -->
+      <p><button id="btnStart">Record</button></p>
 
-        // Get access to the camera!
-        // Make sure the video is HD
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({
-                video: { width: { min: 1280 }, height: { min: 720 } },
-                audio: true
-            }).then(function (stream) {
-                video.srcObject = stream;
+      <!-- stop recording button -->
+      <p><button id="btnStop">Stop</button></p>
+
+      <!-- Displays the captured recording -->
+      <video id="videoDisplay" controls></video>
+    </main>
+
+    <script>
+      //binding querySelectors to $ and $$
+      const $ = document.querySelector.bind(document);
+      const $$ = document.querySelectorAll.bind(document);
+
+      //set recording constraints
+      const constraintObj = {
+        audio: true,
+        video: {
+          //setting min and ideal resolution
+          width: { min: 640, ideal: 1280, max: 1920 },
+          height: { min: 480, ideal: 720, max: 1080 }
+        }
+      };
+
+      //handle older browsers that might implement getUserMedia in some weird way
+      if (navigator.mediaDevices === undefined) {
+        navigator.mediaDevices = {};
+        navigator.mediaDevices.getUserMedia = function(constraintObj) {
+          let getUserMedia =
+            navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+          if (!getUserMedia) {
+            return Promise.reject(
+              new Error("getUserMedia is not implemented in this browser")
+            );
+          }
+          return new Promise(function(resolve, reject) {
+            getUserMedia.call(navigator, constraintObj, resolve, reject);
+          });
+        };
+      } else {
+        navigator.mediaDevices
+          .enumerateDevices()
+          .then(devices => {
+            devices.forEach(device => {
+              console.log(device.kind.toUpperCase(), device.label);
             });
-        }
+          })
+          .catch(err => {
+            console.log(err.name, err.message);
+          });
+      }
 
-        const videoElement = document.querySelector('video');
-        const audioSelect = document.querySelector('select#audioSource');
-        const videoSelect = document.querySelector('select#videoSource');
+      //MAIN FUNCTION!!!!
+      navigator.mediaDevices
+        .getUserMedia(constraintObj)
+        .then(function(mediaStreamObj) {
+          //connect the media stream to the videoCapture
+          const $videoCapture = $("#videoCapture");
+          if ("srcObject" in $videoCapture) {
+            $videoCapture.srcObject = mediaStreamObj;
+          } else {
+            //old version
+            $videoCapture.src = window.URL.createObjectURL(mediaStreamObj);
+          }
 
-        navigator.mediaDevices.enumerateDevices()
-            .then(gotDevices).then(getStream).catch(handleError);
+          $videoCapture.onloadedmetadata = function(ev) {
+            //show in the video element what is being captured by the webcam without sound
+            $videoCapture.muted = true;
+            $videoCapture.play();
+          };
 
-        audioSelect.onchange = getStream;
-        videoSelect.onchange = getStream;
+          //add listeners for saving video/audio
+          const $start = $("#btnStart");
+          const $stop = $("#btnStop");
+          const $videoDisplay = $("#videoDisplay");
+          const mediaRecorder = new MediaRecorder(mediaStreamObj);
+          const chunks = [];
 
-        function gotDevices(deviceInfos) {
-            for (let i = 0; i !== deviceInfos.length; ++i) {
-                const deviceInfo = deviceInfos[i];
-                const option = document.createElement('option');
-                option.value = deviceInfo.deviceId;
-                if (deviceInfo.kind === 'audioinput') {
-                    option.text = deviceInfo.label ||
-                        'microphone ' + (audioSelect.length + 1);
-                    audioSelect.appendChild(option);
-                } else if (deviceInfo.kind === 'videoinput') {
-                    option.text = deviceInfo.label || 'camera ' +
-                        (videoSelect.length + 1);
-                    videoSelect.appendChild(option);
-                } else {
-                    console.log('Found another kind of device: ', deviceInfo);
-                }
-            }
-        }
+          $start.addEventListener("click", ev => {
+            mediaRecorder.start();
+            console.log(mediaRecorder.state);
+          });
+          $stop.addEventListener("click", ev => {
+            mediaRecorder.stop();
+            console.log(mediaRecorder.state);
+          });
+          mediaRecorder.ondataavailable = function(ev) {
+            chunks.push(ev.data);
+          };
+          mediaRecorder.onstop = ev => {
+            const blob = new Blob(chunks, { type: "video/mp4;" });
+            chunks.length = 0;
+            const videoURL = window.URL.createObjectURL(blob);
+            $videoDisplay.src = videoURL;
+          };
+        })
+        .catch(function(err) {
+          console.log(err.name, err.message);
+        });
 
-        function getStream() {
-            if (window.stream) {
-                window.stream.getTracks().forEach(function (track) {
-                    track.stop();
-                });
-            }
-
-            const constraints = {
-                audio: {
-                    deviceId: { exact: audioSelect.value }
-                },
-                video: {
-                    deviceId: { exact: videoSelect.value }
-                }
-            };
-
-            navigator.mediaDevices.getUserMedia(constraints).
-                then(gotStream).catch(handleError);
-        }
-
-        function gotStream(stream) {
-            window.stream = stream; // make stream available to console
-            videoElement.srcObject = stream;
-        }
-
-        function handleError(error) {
-            console.error('Error: ', error);
-        }
-
-
+      /*********************************
+              getUserMedia returns a Promise
+              resolve - returns a MediaStream Object
+              reject returns one of the following errors
+              AbortError - generic unknown cause
+              NotAllowedError (SecurityError) - user rejected permissions
+              NotFoundError - missing media track
+              NotReadableError - user permissions given but hardware/OS error
+              OverconstrainedError - constraint video settings preventing
+              TypeError - audio: false, video: false
+              *********************************/
     </script>
-</body>
-
+  </body>
 </html>
