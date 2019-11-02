@@ -1,0 +1,19 @@
+{
+  "name": "zTest-Emails",
+  "version": "1.0.0",
+  "description": "",
+  "main": "emailsServer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node emailsServer.js",
+    "watch": "nodemon emailsServer.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.0.0",
+    "sequelize": "^5.21.2"
+  }
+}
