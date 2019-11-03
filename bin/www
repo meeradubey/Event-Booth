@@ -5,7 +5,11 @@
  */
 
 var app = require('../app');
+<<<<<<< HEAD
 var debug = require('debug')('event-booth:server');
+=======
+var debug = require('debug')('event-booth2:server');
+>>>>>>> cb0382cfdffc2caad55f0a06af0d066025d20a05
 var http = require('http');
 
 /**
