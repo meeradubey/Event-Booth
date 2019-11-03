@@ -1,10 +1,6 @@
 //Store Video IDs
 const videoIDs = [];
 
-//binding querySelectors to $ and $$
-const $ = document.querySelector.bind(document);
-const $$ = document.querySelectorAll.bind(document);
-
 //set recording constraints
 const constraintObj = {
   audio: true,
@@ -49,14 +45,20 @@ if (navigator.mediaDevices === undefined) {
 navigator.mediaDevices
   .getUserMedia(constraintObj)
   .then(function(mediaStreamObj) {
+
+    //add listeners for saving video/audio
+    const $start = document.querySelector("#btnStart");
+    const $stop = document.querySelector("#btnStop");
+    const $save = document.querySelector("#btnSave");
+    const $redo = document.querySelector("#btnRedo");
+    const $videoDisplay = document.querySelector("#videoDisplay");
+    const $videoCapture = document.querySelector("#videoCapture");
+    const $cameraView = document.querySelector("#camera-view-1");
+    const $cameraPlay = document.querySelector("#camera-view-2");
+
+
     //connect the media stream to the videoCapture
-    const $videoCapture = $("#videoCapture");
-    if ("srcObject" in $videoCapture) {
       $videoCapture.srcObject = mediaStreamObj;
-    } else {
-      //old version
-      $videoCapture.src = window.URL.createObjectURL(mediaStreamObj);
-    }
 
     $videoCapture.onloadedmetadata = function(ev) {
       //show in the video element what is being captured by the webcam without sound
@@ -64,18 +66,14 @@ navigator.mediaDevices
       $videoCapture.play();
     };
 
-    //add listeners for saving video/audio
-    const $start = $("#btnStart");
-    const $stop = $("#btnStop");
-    const $save = $("#btnSave");
-    const $redo = $("#btnRedo");
-    const $videoDisplay = $("#videoDisplay");
     const mediaRecorder = new MediaRecorder(mediaStreamObj);
 
     //Store the media stream video chunks (resets every time so only one video is stored locally)
     const chunks = [];
+    let toSave = false;
 
     $start.addEventListener("click", ev => {
+      chunks.length = 0;
       mediaRecorder.start();
       console.log(mediaRecorder.state);
     });
@@ -84,30 +82,38 @@ navigator.mediaDevices
       console.log(mediaRecorder.state);
     });
     $save.addEventListener("click", ev => {
-      alert("Save Button Pressed");
-      console.log(mediaRecorder.state, mediaStreamObj.id, mediaStreamObj);
+      // const videoID = { id: mediaStreamObj.id};
+      // chunks.push(videoID);
+      console.log(chunks);
+      console.log(new Blob(chunks, { type: "video/mp4;" }));
+      const newMessage = {
+        video_blob_id: mediaStreamObj.id,
+      };
+  
+      console.log("newMessage: ", newMessage);
+  
+      $.post("/api/messages", newMessage, messageSent);
     });
     $redo.addEventListener("click", ev => {
-      $("#camera-view-1").style.display = "inline";
-      $("#camera-view-2").style.display = "none";
+      $cameraView.style.display = "inline";
+      $cameraPlay.style.display = "none";
       console.log(mediaRecorder.state);
     });
     mediaRecorder.ondataavailable = function(ev) {
       chunks.push(ev.data);
     };
     mediaRecorder.onstop = ev => {
-      $("#camera-view-1").style.display = "none";
+      $cameraView.style.display = "none";
       const blob = new Blob(chunks, { type: "video/mp4;" });
-      chunks.length = 0;
       const videoURL = window.URL.createObjectURL(blob);
-      $("#camera-view-2").style.display = "inline";
+      $cameraPlay.style.display = "inline";
       $videoDisplay.src = videoURL;
-      console.log(blob);
-      console.log(blob.id);
-      console.log(videoURL);
-      console.log(blob.type);
     };
   })
   .catch(function(err) {
     console.log(err.name, err.message);
   });
+
+  function messageSent() {
+    alert("WASSUP");
+  }
