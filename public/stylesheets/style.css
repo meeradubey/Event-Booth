@@ -1,13 +1,36 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 a {
   color: #00B7FF;
 }
 
+/* Home Page Nav Bar */
+
+#homepage-bar {
+  height: 80px;
+}
+
+#EBtag {
+  font-size: 35px;
+  padding-top: 15px;
+  font-family: 'Libre Baskerville', sans-serif;
+  color: black;
+  font-weight: bold;
+}
+
+
+/* Welcome Section */
 #welcome-section {
   background-image: url(/Projects/Event-Booth/public/images/photoUno.jpg);
-  width: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* width: 100%; */
+  height: 631px;
+  font-family: 'Open Sans', sans-serif;
+  color: whitesmoke;
+  padding-top: 150px;
+  text-align: center;
 }
