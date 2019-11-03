@@ -6,3 +6,8 @@ body {
 a {
   color: #00B7FF;
 }
+
+#welcome-section {
+  background-image: url(/Projects/Event-Booth/public/images/photoUno.jpg);
+  width: 100%;
+}
