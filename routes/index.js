@@ -3,6 +3,7 @@ var router = express.Router();
 const sgMail = require('@sendgrid/mail');
 var AWS = require("aws-sdk");
 var fs = require('fs');
+const db = require("../models");
 AWS.config.update({
   accessKeyId: "AKIAWY2KH2UONZBNL332",
   secretAccessKey: "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",
@@ -65,19 +66,25 @@ function uploadToS3(file) {
   });
 }
 
-function sendemail(){
-  let emailArray = ["heatherlatin@gmail.com", "meeradubey97@gmail.com", "carlamanosa@yahoo.com","l.rush7@gmail.com"]
+async function sendemail(){
+let emailData = await db.email_invite.findAll({})
+    
+ emailData = JSON.parse(JSON.stringify(emailData));
+    
 
 
-for( let i = 0; i < emailArray.length; i++){
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+
+for( let i = 0; i < emailData.length; i++){
+console.log(emailData[i].invite_email)
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const msg = {
   
-  to: emailArray[i],
+  to: emailData[i].invite_email,
   from: 'l.rush7@gmail.com',
-  subject: 'I yam what I yam',
-  text: 'And i dont beet myself up about it',
-  html: '<strong>because I dont carrot bout it</strong>',
+  subject: 'here is the link',
+  text: `localhost:3000/${emailData[i].invite_name}/${emailData[i].event_id}`,
+  html: `<a>localhost:3000/${emailData[i].invite_name}/${emailData[i].event_id}</a>`,
 };
 sgMail.send(msg);
 }
