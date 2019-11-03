@@ -1,8 +1,5 @@
 var express = require('express');
 var router = express.Router();
-<<<<<<< HEAD
-
-=======
 const sgMail = require('@sendgrid/mail');
 var AWS = require("aws-sdk");
 var fs = require('fs');
@@ -25,14 +22,11 @@ var photoBucket = new AWS.S3({
 
 
 //Lawrence's routers
->>>>>>> cb0382cfdffc2caad55f0a06af0d066025d20a05
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-<<<<<<< HEAD
-=======
 //Path to send email
 router.get('/sendemail', function(req, res, next) {
 sendemail();
@@ -120,5 +114,4 @@ function makeANewBucket (){
 }
 
 
->>>>>>> cb0382cfdffc2caad55f0a06af0d066025d20a05
 module.exports = router;
