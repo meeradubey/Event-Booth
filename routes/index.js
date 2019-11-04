@@ -2,8 +2,10 @@ var express = require('express');
 var router = express.Router();
 const sgMail = require('@sendgrid/mail');
 var AWS = require("aws-sdk");
-var fs = require('fs');
+var fs = require('fs-extra');
+var multer  = require('multer');
 const db = require("../models");
+var FileReader = require('filereader')
 AWS.config.update({
   accessKeyId: "AKIAWY2KH2UONZBNL332",
   secretAccessKey: "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",
@@ -24,9 +26,7 @@ var photoBucket = new AWS.S3({
 
 //Lawrence's routers
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+
 
 //Path to send email
 router.get('/sendemail', function(req, res, next) {
@@ -34,17 +34,40 @@ sendemail();
 res.send("woot")
 });
 
-//Path to updload
-router.get('/uploadaws', function(req, res, next) {
+
+
+//Multer, set up destination for file
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    let path = `./routes/routesUploads/`;
+      fs.mkdirsSync(path);
+      cb(null, path);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname)
+  }
+})
+var upload = multer({ storage: storage })
+var type = upload.single('blobby.mp4');
+
+//Path to updload to s3
+router.post('/uploadaws', type, function(req, res) {
+  
+ 
+  let fileToUpload = JSON.stringify(req.file)
   uploadToS3()
+  console.log(fileToUpload)
+
   res.send("woot woot")
 });
-
+//Path to download from s3
 router.get('/downloadaws', function(req, res, next) {
   downloadaws();
 
 res.send("hopefully it downloaded")
 });
+
+//Path to make new bucket
 router.get('/newbucket', function(req, res, next) {
   makeANewBucket()
 
@@ -57,9 +80,9 @@ function uploadToS3(file) {
   
   photoBucket.upload({
           ACL: 'public-read', 
-          Body: fs.createReadStream('./public/imgs/image.png'), 
+          Body: fs.createReadStream('./routes/routesUploads/blobby.mp4'), 
           // file upload by below name
-          Key: 'aws_test.jpg',
+          Key: 'blobby.mp4',
           ContentType: 'application/octet-stream' // force download if it's accessed as a top location
   },(err, response)=>{
       console.log(err, response)
@@ -71,10 +94,6 @@ let emailData = await db.email_invite.findAll({})
     
  emailData = JSON.parse(JSON.stringify(emailData));
     
-
-
-
-
 for( let i = 0; i < emailData.length; i++){
 console.log(emailData[i].invite_email)
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -102,6 +121,12 @@ s3.getObject(
       // do something with data.Body
     // console.log(data)
       console.log(data.Body)
+      fs.writeFile('./routes/routesDownloads/video.mp4', data.Body, function(err){
+        if(err)
+          console.log(err.code, "-", err.message);
+    
+        return null;   
+      }); 
     }
   }
 );

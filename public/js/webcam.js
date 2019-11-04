@@ -84,7 +84,7 @@ navigator.mediaDevices
     $save.addEventListener("click", ev => {
       // const videoID = { id: mediaStreamObj.id};
       // chunks.push(videoID);
-      console.log(chunks);
+      console.log("chunks:" + chunks);
       console.log(new Blob(chunks, { type: "video/mp4;" }));
       const newMessage = {
         video_blob_id: mediaStreamObj.id,
@@ -93,6 +93,28 @@ navigator.mediaDevices
       console.log("newMessage: ", newMessage);
   
       $.post("/api/messages", newMessage, messageSent);
+//Lawrence's additions
+    
+      console.log( new Blob(chunks, { type: "video/mp4;" }))
+      var blobData = new Blob(chunks, { type: "video/mp4;" })
+      console.log("Lawrence's blob" + blobData)
+    
+      var fd = new FormData();
+      fd.append('blobby.mp4', blobData, 'blobby.txt');
+      console.log(fd)
+      fetch('/uploadaws',
+      {
+        method: 'post',
+        body: fd
+      })
+    .then(function(response) {
+      console.log('done');
+      return response;
+    })
+    .catch(function(err){ 
+      console.log(err);
+    });
+//End of Lawrence's addidtons
     });
     $redo.addEventListener("click", ev => {
       $cameraView.style.display = "inline";
