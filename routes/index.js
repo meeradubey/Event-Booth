@@ -35,7 +35,72 @@ sendemail();
 res.send("woot")
 });
 
-
+//Path to recieve email
+router.get('/:id/:name/:eventid', function(req, res) {
+  console.log("Email id",req.params.id)
+  console.log("Name",req.params.name)
+  console.log("Event id",req.params.eventid)
+  const user = {
+    emailID: req.params.id,
+    Name: req.params.name,
+    eventID: req.params.eventid
+  };
+  console.log(user);
+  
+  html = `<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+      <title>Test</title>
+  
+      <!-- jQuery -->
+      <script src="https://code.jquery.com/jquery.js"></script>
+      
+    </head>
+  
+    <body>
+      <main>
+      <div><h1>Welcome ${req.params.name}, record a video</h1></div>
+      <div><p>Event id ${req.params.eventid}</p></div>
+      <div><p>Email id ${req.params.id}</p></div>
+        <div id="camera-view-1" style="display: inline;">
+          <!-- Displays what the webcam is seeing -->
+          <video id="videoCapture" autoplay></video>
+          <!-- start recording button -->
+          <p><button id="btnStart">Record</button></p>
+          <!-- stop recording button -->
+          <p><button id="btnStop">Stop</button></p>
+        </div>
+  
+        <div id="camera-view-2" style="display: none;">
+          <!-- Displays the captured recording -->
+          <video id="videoDisplay" controls></video>
+          <!-- will eventually send to database - still working on it -->
+          <p><button id="btnSave">Save</button></p>
+          <!-- do over (starts recording process again) -->
+          <p><button id="btnRedo">Redo</button></p>
+        </div>
+  
+        <div id="testBlob">
+          <video id="blobDisplay" controls></video>
+        </div>
+        <!-- <form>
+          <input type="file" name="videoFile">
+        </form> -->
+      </main>
+  
+      <script src="/js/webcam.js" type="text/javascript"></script>
+    </body>
+  </html>
+  `
+ res.send(html);
+  });
+  
+router.get('/:id/:name/js/webcam.js', function(req, res) {
+res.send(path.join(__dirname, "../public/js/webcam.js"))
+})
 
 //Multer, set up destination for file
 var storage = multer.diskStorage({
@@ -57,7 +122,7 @@ router.post('/uploadaws', upload.any(),  function(req, res) {
   console.log(req.files[0]);
   fs.writeFileSync(path.join(__dirname, '/routesUploads/videotest.webm'), req.files[0].buffer);
 //  console.log(req.file)
-//  uploadToS3(req.file)
+  uploadToS3(req.file)
   
 
   res.send("woot woot")
@@ -89,7 +154,7 @@ function uploadToS3(file) {
   
   photoBucket.upload({
           ACL: 'public-read', 
-          Body: file, 
+          Body:fs.createReadStream("./routes/routesUploads/videotest.webm"), 
           // file upload by below name
           Key: 'test.mp4',
           ContentType: 'application/octet-stream' // force download if it's accessed as a top location
@@ -111,8 +176,8 @@ const msg = {
   to: emailData[i].invite_email,
   from: 'l.rush7@gmail.com',
   subject: 'here is the link',
-  text: `localhost:3000/${emailData[i].invite_name}/${emailData[i].event_id}`,
-  html: `<a>localhost:3000/${emailData[i].invite_name}/${emailData[i].event_id}</a>`,
+  // text: `localhost:3000/${emailData[i].invite_name}/${emailData[i].event_id}`,
+  html: `http://localhost:8080/${emailData[i].id}/${emailData[i].invite_name}/${emailData[i].event_id}`,
 };
 sgMail.send(msg);
 }
