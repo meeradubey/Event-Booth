@@ -5,7 +5,8 @@ var AWS = require("aws-sdk");
 var fs = require('fs-extra');
 var multer  = require('multer');
 const db = require("../models");
-var FileReader = require('filereader')
+var FileReader = require('filereader');
+var path = require("path");
 AWS.config.update({
   accessKeyId: "AKIAWY2KH2UONZBNL332",
   secretAccessKey: "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",
@@ -47,15 +48,16 @@ var storage = multer.diskStorage({
     cb(null, file.fieldname)
   }
 })
-var upload = multer({ storage: storage })
-var type = upload.single('blobby.mp4');
+var upload = multer();
+var type = upload.single('blobby.webm');
 
 //Path to updload to s3
 
-router.post('/uploadaws', type,  function(req, res) {
-
- console.log(req.file)
- uploadToS3(req.file)
+router.post('/uploadaws', upload.any(),  function(req, res) {
+  console.log(req.files[0]);
+  fs.writeFileSync(path.join(__dirname, '/routesUploads/videotest.webm'), req.files[0].buffer);
+//  console.log(req.file)
+//  uploadToS3(req.file)
   
 
   res.send("woot woot")
