@@ -56,6 +56,8 @@ navigator.mediaDevices
     const $cameraView = document.querySelector("#camera-view-1");
     const $cameraPlay = document.querySelector("#camera-view-2");
 
+    const $blobDisplay = document.querySelector("#blobDisplay");
+
 
     //connect the media stream to the videoCapture
       $videoCapture.srcObject = mediaStreamObj;
@@ -100,8 +102,18 @@ navigator.mediaDevices
       console.log("Lawrence's blob" + blobData)
     
       var fd = new FormData();
-      fd.append('blobby.mp4', blobData, 'blobby.txt');
-      console.log(fd)
+      
+      fd.append('blobby.mp4', blobData);
+      //var file = new File([blobData], "blobbyFile")
+      
+      //Testing stuff
+      // $.get("/downloadvid", function(data){
+      //   const testBlob = data;
+      //   const videoURL = window.URL.createObjectURL(testBlob);
+      //   $blobDisplay.src = videoURL;
+      // });
+      
+      
       fetch('/uploadaws',
       {
         method: 'post',
@@ -128,6 +140,7 @@ navigator.mediaDevices
       $cameraView.style.display = "none";
       const blob = new Blob(chunks, { type: "video/mp4;" });
       const videoURL = window.URL.createObjectURL(blob);
+      console.log("Video url", videoURL)
       $cameraPlay.style.display = "inline";
       $videoDisplay.src = videoURL;
     };

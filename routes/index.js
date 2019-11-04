@@ -51,20 +51,27 @@ var upload = multer({ storage: storage })
 var type = upload.single('blobby.mp4');
 
 //Path to updload to s3
-router.post('/uploadaws', type, function(req, res) {
+
+router.post('/uploadaws', type,  function(req, res) {
+
+ console.log(req.file)
+ uploadToS3(req.file)
   
- 
-  let fileToUpload = JSON.stringify(req.file)
-  uploadToS3()
-  console.log(fileToUpload)
 
   res.send("woot woot")
 });
 //Path to download from s3
-router.get('/downloadaws', function(req, res, next) {
-  downloadaws();
+router.get('/downloadaws/:videoName', function(req, res, next) {
+  downloadaws(req.params.videoName);
+let file = require("./routesDownloads/video.mp4")
+res.send(file)
+});
 
-res.send("hopefully it downloaded")
+router.get('/downloadvid', function(req, res, next) {
+  
+let file = require("./routesUploads/blobby.mp4")
+console.log(file)
+res.send(file)
 });
 
 //Path to make new bucket
@@ -80,9 +87,9 @@ function uploadToS3(file) {
   
   photoBucket.upload({
           ACL: 'public-read', 
-          Body: fs.createReadStream('./routes/routesUploads/blobby.mp4'), 
+          Body: file, 
           // file upload by below name
-          Key: 'blobby.mp4',
+          Key: 'test.mp4',
           ContentType: 'application/octet-stream' // force download if it's accessed as a top location
   },(err, response)=>{
       console.log(err, response)
