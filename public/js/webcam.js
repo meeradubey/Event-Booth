@@ -7,6 +7,7 @@ const constraintObj = {
   video: {
     //grabs the front camera instead of the back camera if opened on a mobile device
     facingMode: "user",
+
     //setting min and ideal resolution
     width: { min: 640, ideal: 1280, max: 1920 },
     height: { min: 480, ideal: 720, max: 1080 }
@@ -68,7 +69,7 @@ navigator.mediaDevices
       $videoCapture.play();
     };
 
-    const mediaRecorder = new MediaRecorder(mediaStreamObj);
+    const mediaRecorder = new MediaRecorder(mediaStreamObj, {mimeType: "video/webm; codecs=vp9"});
 
     //Store the media stream video chunks (resets every time so only one video is stored locally)
     const chunks = [];
@@ -99,14 +100,14 @@ navigator.mediaDevices
       $.post("/api/messages", newMessage, messageSent);
 //Lawrence's additions
     
-      console.log( new Blob(chunks, { type: "video/mp4;" }))
-      var blobData = new Blob(chunks, { type: "video/mp4;" })
+     // console.log( new Blob(chunks, { type: "video/mp4;" }))
+      var blobData = new Blob(chunks, { type: "video/webm" });
       console.log("Lawrence's blob" + blobData)
     
       var fd = new FormData();
       
-      fd.append('blobby.mp4', blobData);
       //var file = new File([blobData], "blobbyFile")
+      fd.append('blobby.webm', blobData);
       
       //Testing stuff
       // $.get("/downloadvid", function(data){
@@ -136,10 +137,14 @@ navigator.mediaDevices
       console.log(mediaRecorder.state);
     });
     mediaRecorder.ondataavailable = function(ev) {
-      chunks.push(ev.data);
+      if (event.data.size > 0) {
+        chunks.push(ev.data);
+      }
     };
     mediaRecorder.onstop = ev => {
       $cameraView.style.display = "none";
+      console.log(ev.data);
+      console.log(chunks);
       const blob = new Blob(chunks, { type: "video/mp4;" });
       const videoURL = window.URL.createObjectURL(blob);
       console.log("Video url", videoURL)
