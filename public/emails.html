@@ -29,7 +29,8 @@
   <!-- stepper -->
 
   <!-- MultiStep Form -->
-<div class="row">
+
+<div class="row" style="justify-content: center;padding-top: 50px;">
     <div class="col-md-6 col-md-offset-3">
         <form id="msform">
             <!-- progressbar -->
@@ -63,10 +64,10 @@
                 <input type="text" id="new-email" name="email" placeholder="Attendee Email"/>
                 <button type="button" id="btnSubmit" class="btn btn-warning">Add Attendee</button>
                 <p>Attendees:<span id="invite-count">0</span></p>
-                <ol id="recipients-list">
+                <ul id="recipients-list">
                     <!-- Display Recipient Name and Email List -->
                     <li>Name<br><span>Email</span></li><br>
-                  </ol>
+                  </ul>
 
             </fieldset>
         </form>
@@ -75,26 +76,6 @@
 </div>
 <!-- /.MultiStep Form -->
 
-
-
-  <!-- Email Recipients Form -->
-  <form id="get-recipients">
-    <input type="hidden" id="event_id" value="1" />
-    <label for="new-recipient">Add Recipient's Name</label>
-    <input type="text" id="new-recipient" />
-    <label for="new-email">Add Email:</label>
-    <input type="email" id="new-email" />
-    <button id="btnSubmit" type="submit">Add Email Recipient</button>
-  </form>
-
-  <!-- recipients form -->
-  <div>
-    <p>Recipients: <span id="invite-count">0</span></p>
-    <ol id="recipients-list">
-      <!-- Display Recipient Name and Email List -->
-      <li>Name<br><span>Email</span></li><br>
-    </ol>
-  </div>
 
   <!-- form script -->
 <script>
