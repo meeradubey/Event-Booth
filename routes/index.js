@@ -2,7 +2,10 @@ var express = require('express');
 var router = express.Router();
 const sgMail = require('@sendgrid/mail');
 var AWS = require("aws-sdk");
-var fs = require('fs');
+var fs = require('fs-extra');
+var multer  = require('multer');
+const db = require("../models");
+var FileReader = require('filereader')
 AWS.config.update({
   accessKeyId: "AKIAWY2KH2UONZBNL332",
   secretAccessKey: "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",
@@ -23,9 +26,7 @@ var photoBucket = new AWS.S3({
 
 //Lawrence's routers
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+
 
 //Path to send email
 router.get('/sendemail', function(req, res, next) {
@@ -33,17 +34,47 @@ sendemail();
 res.send("woot")
 });
 
-//Path to updload
-router.get('/uploadaws', function(req, res, next) {
-  uploadToS3()
+
+
+//Multer, set up destination for file
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    let path = `./routes/routesUploads/`;
+      fs.mkdirsSync(path);
+      cb(null, path);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname)
+  }
+})
+var upload = multer({ storage: storage })
+var type = upload.single('blobby.mp4');
+
+//Path to updload to s3
+
+router.post('/uploadaws', type,  function(req, res) {
+
+ console.log(req.file)
+ uploadToS3(req.file)
+  
+
   res.send("woot woot")
 });
-
-router.get('/downloadaws', function(req, res, next) {
-  downloadaws();
-
-res.send("hopefully it downloaded")
+//Path to download from s3
+router.get('/downloadaws/:videoName', function(req, res, next) {
+  downloadaws(req.params.videoName);
+let file = require("./routesDownloads/video.mp4")
+res.send(file)
 });
+
+router.get('/downloadvid', function(req, res, next) {
+  
+let file = require("./routesUploads/blobby.mp4")
+console.log(file)
+res.send(file)
+});
+
+//Path to make new bucket
 router.get('/newbucket', function(req, res, next) {
   makeANewBucket()
 
@@ -56,28 +87,30 @@ function uploadToS3(file) {
   
   photoBucket.upload({
           ACL: 'public-read', 
-          Body: fs.createReadStream('./public/imgs/image.png'), 
+          Body: file, 
           // file upload by below name
-          Key: 'aws_test.jpg',
+          Key: 'test.mp4',
           ContentType: 'application/octet-stream' // force download if it's accessed as a top location
   },(err, response)=>{
       console.log(err, response)
   });
 }
 
-function sendemail(){
-  let emailArray = ["heatherlatin@gmail.com", "meeradubey97@gmail.com", "carlamanosa@yahoo.com","l.rush7@gmail.com"]
-
-
-for( let i = 0; i < emailArray.length; i++){
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+async function sendemail(){
+let emailData = await db.email_invite.findAll({})
+    
+ emailData = JSON.parse(JSON.stringify(emailData));
+    
+for( let i = 0; i < emailData.length; i++){
+console.log(emailData[i].invite_email)
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const msg = {
   
-  to: emailArray[i],
+  to: emailData[i].invite_email,
   from: 'l.rush7@gmail.com',
-  subject: 'I yam what I yam',
-  text: 'And i dont beet myself up about it',
-  html: '<strong>because I dont carrot bout it</strong>',
+  subject: 'here is the link',
+  text: `localhost:3000/${emailData[i].invite_name}/${emailData[i].event_id}`,
+  html: `<a>localhost:3000/${emailData[i].invite_name}/${emailData[i].event_id}</a>`,
 };
 sgMail.send(msg);
 }
@@ -95,6 +128,12 @@ s3.getObject(
       // do something with data.Body
     // console.log(data)
       console.log(data.Body)
+      fs.writeFile('./routes/routesDownloads/video.mp4', data.Body, function(err){
+        if(err)
+          console.log(err.code, "-", err.message);
+    
+        return null;   
+      }); 
     }
   }
 );
