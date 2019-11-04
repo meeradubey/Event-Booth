@@ -1,5 +1,7 @@
 body {
   font-family: 'Open Sans', sans-serif;
+  height: 100%;
+  overflow: hidden;
 }
 
 a {
@@ -10,6 +12,11 @@ a {
 
 #homepage-bar {
   height: 80px;
+  
+}
+
+.nav-item{
+    margin: 0 auto;
 }
 
 #EBtag {
@@ -20,18 +27,23 @@ a {
   font-weight: bold;
 }
 
-
+#wrapper{
+height: 100%;
+background-image: url(/images/photoUno.jpg);
+background-repeat: no-repeat;
+background-size: cover;
+}
 /* Welcome Section */
 #welcome-section {
-  background-image: url(/Projects/Event-Booth/public/images/photoUno.jpg);
+ 
+  
   background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  
   /* width: 100%; */
   height: 631px;
   font-family: 'Open Sans', sans-serif;
   color: whitesmoke;
-  padding-top: 150px;
+  padding-top: 200px;
   text-align: center;
 }
 
