@@ -59,10 +59,15 @@
                 <h2 class="fs-title">Attendee List</h2>
                 <h3 class="fs-subtitle">Invite friends and family.</h3>
                 <input type="hidden" id="event_id" value="1" />
-                <input type="text" name="fname" placeholder="Attendee Name"/>
-                <input type="text" name="email" placeholder="Attendee Email"/>
-                <input type="submit" name="submit" class="submit action-button" value="Submit"/>
+                <input type="text" id="new-recipient" name="fname" placeholder="Attendee Name"/>
+                <input type="text" id="new-email" name="email" placeholder="Attendee Email"/>
+                <button type="button" id="btnSubmit" class="btn btn-warning">Add Attendee</button>
                 <p>Attendees:<span id="invite-count">0</span></p>
+                <ol id="recipients-list">
+                    <!-- Display Recipient Name and Email List -->
+                    <li>Name<br><span>Email</span></li><br>
+                  </ol>
+
             </fieldset>
         </form>
        
