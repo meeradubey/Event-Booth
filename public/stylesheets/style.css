@@ -23,7 +23,8 @@ a {
 
 /* Welcome Section */
 #welcome-section {
-  background-image: url(/Projects/Event-Booth/public/images/photoUno.jpg);
+  background-image: url(/images/photoUno.jpg);
+  height: 100vh;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
