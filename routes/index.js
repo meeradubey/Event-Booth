@@ -91,15 +91,15 @@ router.get('/:id/:name/:eventid', function(req, res) {
         </form> -->
       </main>
   
-      <script src="js/webcam.js" type="text/javascript"></script>
+      <script src="/js/webcam.js" type="text/javascript"></script>
     </body>
   </html>
   `
  res.send(html);
   });
   
-router.get('/:id/:name/:eventid/webcamjs', function(req, res) {
-res.send(path.join(__dirname, "./public/js/webcam.js"))
+router.get('/:id/:name/js/webcam.js', function(req, res) {
+res.send(path.join(__dirname, "../public/js/webcam.js"))
 })
 
 //Multer, set up destination for file
