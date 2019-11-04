@@ -56,7 +56,7 @@ navigator.mediaDevices
     const $cameraView = document.querySelector("#camera-view-1");
     const $cameraPlay = document.querySelector("#camera-view-2");
 
-    const $blobDisplay = document.querySelector("#blobDisplay");
+    const $recordingStatus = document.querySelector("#test");
 
 
     //connect the media stream to the videoCapture
@@ -72,16 +72,18 @@ navigator.mediaDevices
 
     //Store the media stream video chunks (resets every time so only one video is stored locally)
     const chunks = [];
-    let toSave = false;
 
     $start.addEventListener("click", ev => {
       chunks.length = 0;
       mediaRecorder.start();
       console.log(mediaRecorder.state);
+      $recordingStatus.style.display = "inline";
+
     });
     $stop.addEventListener("click", ev => {
       mediaRecorder.stop();
       console.log(mediaRecorder.state);
+      $recordingStatus.style.display = "none";
     });
     $save.addEventListener("click", ev => {
       // const videoID = { id: mediaStreamObj.id};
