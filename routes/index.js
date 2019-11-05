@@ -184,7 +184,8 @@ router.post('/uploadaws', upload.any(),  function(req, res) {
 });
 //Path to get keys
 router.get('/getvidsrcs', function(req, res, next) {
-  const urls = keyArr.map(key => "https://event-booth-bucket.s3-us-west-2.amazonaws.com/" + key);  
+  const urls = keyArr.map(key => "https://event-booth-bucket.s3-us-west-2.amazonaws.com/" + key); 
+  keyArr.length = 0 
   console.log(urls)
 res.send(urls)
 });
