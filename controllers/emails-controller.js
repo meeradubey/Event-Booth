@@ -2,7 +2,7 @@ var db = require("../models");
 
 function createPageObject(obj) {
   return {
-    isStoresPage: true,
+    isEventPage: true,
     ...obj
   }
 }
@@ -13,7 +13,7 @@ module.exports = {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
   html: {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-    // GET: /stores                                            //
+    // GET: /event                                             //
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
     list: function (req, res) {
       db.store.findAll({

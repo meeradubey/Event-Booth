@@ -7,28 +7,28 @@ module.exports = {
   html: {
     logout: function (req, res) {
       req.logout();
-      res.redirect("/login");
+      res.redirect("/");
     },
     home: function(req, res) {
       // If the user already has an account send them to the members page
       if (req.user) {
-          return res.render("index", { email: req.user.email, isHomePage: true });
+          return res.render("/event", { email: req.user.email, isHomePage: true });
       }
-      res.redirect("/login");
+      res.redirect("/");
     },
     login: function(req, res) {
       // If the user already has an account send them to the members page
       if (req.user) {
-        return res.redirect("/");
+        return res.redirect("/event");
       }
-      res.render("user/login", { isLoggedOut: true, isLoginPage: true })
+      res.render("/", { isLoggedOut: true, isLoginPage: true })
     },
     signup: function(req, res) {
       // If the user already has an account send them to the members page
       if (req.user) {
-        return res.redirect("/");
+        return res.redirect("/event");
       }
-      res.render("user/signup", { isLoggedOut: true, isSignUpPage: true })
+      res.render("/", { isLoggedOut: true, isSignUpPage: true })
     }
   },
   api: {

@@ -1,20 +1,12 @@
 $(document).ready(() => {
-    $(document).on("submit", ".user-form", function (event) {
+    $("#newUserBtn").on("click", (ev) => {
         event.preventDefault();
-        const email = $("#email").val();
-        const password = $("#password").val();
-        const repassword = $("#re-password").val();
-        if (password !== repassword) {
-            // don't use alert here:
-            alert("passwords must match!");
-            password.val("");
-            repassword.val("");
-            return;
-        }
+        const email = $("#newEmail").val();
+        const password = $("#newPassword").val();
         $.post("/api/signup", {
             email, password
         }).then(() => {
-            location.replace("/");
+            location.replace("/emails");
         }).catch(() => {
             // don't use alert here:
             alert("Incorrect username or password!");
