@@ -68,7 +68,7 @@ aria-hidden="true">
 
   <!-- MultiStep Form -->
 
-<div id="event-form" class="row" style="justify-content: center;padding-top: 40px;font-family: 'Open Sans', sans-serif ;">
+<div class="row" style="justify-content: center;padding-top: 5%;font-family: 'Open Sans', sans-serif ;">
     <div class="col-md-6 col-md-offset-3">
         <form id="msform">
             <!-- progressbar -->
@@ -100,13 +100,15 @@ aria-hidden="true">
                 <input type="hidden" id="event_id" value="1" />
                 <input type="text" id="new-recipient" name="fname" placeholder="Attendee Name"/>
                 <input type="text" id="new-email" name="email" placeholder="Attendee Email"/>
-                <input type="button" id="btnSubmit" name="next" class="next action-button" value="Next"/>
+                <!-- Lawrence added stuff here -->
+                <div id = "recipients-list"></div>
                 <p>Attendees:<span id="invite-count">0</span></p>
-                <ul id="recipients-list">
-                    <!-- Display Recipient Name and Email List -->
-                    <li>Name<br><span>Email</span></li><br>
-                  </ul>
-
+                <input type="button" id="btnSubmit" name="" class=" action-button" value="Add">
+                <input type="button" id="btnSendEmail" name="" class=" action-button" value="Send Emails">
+                
+                
+                
+                  
             </fieldset>
         </form>
        
@@ -203,9 +205,7 @@ $(".submit").click(function(){
 </script>
  
   <!-- Custom Script -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
     integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
     crossorigin="anonymous"></script>

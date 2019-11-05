@@ -254,3 +254,11 @@ body {
     background: #C5C5F1;
     text-decoration: none;
 }
+
+.spacer{
+    padding-right: 10px;
+}
+
+#recipients-list{
+    text-align:left !important;
+}
