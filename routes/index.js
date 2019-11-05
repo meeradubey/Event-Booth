@@ -183,10 +183,10 @@ router.post('/uploadaws', upload.any(),  function(req, res) {
   res.send("woot woot")
 });
 //Path to get keys
-router.get('/getVidSrcs', function(req, res, next) {
+router.get('/getvidsrcs', function(req, res, next) {
   const urls = keyArr.map(x => "https://event-booth-bucket.s3-us-west-2.amazonaws.com/" + x);  
   console.log(urls)
-res.send("gucci")
+res.send(urls)
 });
 
 router.get('/downloadvid', function(req, res, next) {
