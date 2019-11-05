@@ -235,7 +235,7 @@ const msg = {
   from: 'l.rush7@gmail.com',
   subject: 'here is the link',
   // text: `localhost:3000/${emailData[i].invite_name}/${emailData[i].event_id}`,
-  html: `http://localhost:8080/${emailData[i].id}/${emailData[i].invite_name}/${emailData[i].event_id}`,
+  html: `https://fierce-inlet-64374.herokuapp.com/${emailData[i].id}/${emailData[i].invite_name}/${emailData[i].event_id}`,
 };
 sgMail.send(msg);
 }

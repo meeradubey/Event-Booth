@@ -34,7 +34,22 @@
     
 </div>
 
+<script>
+function getVids() {
+        $.get("/getvidsrcs", function(data) {
+          let urls = data;
+          let $videos= $('#videos')
+          for(let i = 0; i < urls.length; i++ )
+          $videos.append(`  
+          <div class="col-sm">     
+          <video width="320" height="240" controls>
+          <source src="${urls[i]}" type="video/webm">
+          </video></div>`);
+        });
+      }
 
+      getVids();
+</script>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
     integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
