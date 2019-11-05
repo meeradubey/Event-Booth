@@ -46,61 +46,16 @@ router.get('/:id/:name/:eventid', function(req, res) {
     eventID: req.params.eventid
   };
   console.log(user);
-  
-  html = `<!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-      <title>Test</title>
-  
-      <!-- jQuery -->
-      <script src="https://code.jquery.com/jquery.js"></script>
-      
-    </head>
-  
-    <body>
-      <main>
-      <div><h1>Welcome ${req.params.name}, record a video</h1></div>
-      <div><p>Event id ${req.params.eventid}</p></div>
-      <div><p>Email id ${req.params.id}</p></div>
-        <div id="camera-view-1" style="display: inline;">
-          <!-- Displays what the webcam is seeing -->
-          <video id="videoCapture" autoplay></video>
-          <!-- start recording button -->
-          <p><button id="btnStart">Record</button></p>
-          <!-- stop recording button -->
-          <p><button id="btnStop">Stop</button></p>
-        </div>
-  
-        <div id="camera-view-2" style="display: none;">
-          <!-- Displays the captured recording -->
-          <video id="videoDisplay" controls></video>
-          <!-- will eventually send to database - still working on it -->
-          <p><button id="btnSave">Save</button></p>
-          <!-- do over (starts recording process again) -->
-          <p><button id="btnRedo">Redo</button></p>
-        </div>
-  
-        <div id="testBlob">
-          <video id="blobDisplay" controls></video>
-        </div>
-        <!-- <form>
-          <input type="file" name="videoFile">
-        </form> -->
-      </main>
-  
-      <script src="/js/webcam.js" type="text/javascript"></script>
-    </body>
-  </html>
-  `
- res.send(html);
+  $("#user-name").text(user.name);
+  $("#event-id").text(user.eventID);
+  $("#email-id").text(user.emailID);
+
+   res.send("/webcam/:id/:name/:eventid");
   });
   
-router.get('/:id/:name/js/webcam.js', function(req, res) {
-res.send(path.join(__dirname, "../public/js/webcam.js"))
-})
+// router.get('/:id/:name/js/webcam.js', function(req, res) {
+// res.send(path.join(__dirname, "../public/js/webcam.js"))
+// })
 
 //Multer, set up destination for file
 var storage = multer.diskStorage({
