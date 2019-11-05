@@ -116,6 +116,21 @@ navigator.mediaDevices
       //   $blobDisplay.src = videoURL;
       // });
       
+      var user = {
+        id:  $('#reqId').text(),
+        name: $('#reqName').text(),
+        eventId: $('#reqEventId').text()
+      }
+      console.log(user)
+      fetch('/getUserStuff',
+      {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+      },
+        body:  JSON.stringify({user
+      })
+    })
       
       fetch('/uploadaws',
       {
