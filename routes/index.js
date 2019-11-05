@@ -37,62 +37,95 @@ res.send("woot")
 
 //Path to recieve email
 router.get('/:id/:name/:eventid', function(req, res) {
-  console.log("Email id",req.params.id)
-  console.log("Name",req.params.name)
-  console.log("Event id",req.params.eventid)
   const user = {
     emailID: req.params.id,
     Name: req.params.name,
     eventID: req.params.eventid
   };
-  console.log(user);
+
+  module.exports = user;
   
   html = `<!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-      <title>Test</title>
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link href=“https://fonts.googleapis.com/css?family=Libre+Baskerville%7COpen+Sans&display=swap” rel=“stylesheet” />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Webcam</title>
+  </head>
   
-      <!-- jQuery -->
-      <script src="https://code.jquery.com/jquery.js"></script>
-      
-    </head>
+  <body>
+    <main>
   
-    <body>
-      <main>
-      <div><h1>Welcome ${req.params.name}, record a video</h1></div>
-      <div><p>Event id ${req.params.eventid}</p></div>
-      <div><p>Email id ${req.params.id}</p></div>
-        <div id="camera-view-1" style="display: inline;">
-          <!-- Displays what the webcam is seeing -->
-          <video id="videoCapture" autoplay></video>
-          <!-- start recording button -->
-          <p><button id="btnStart">Record</button></p>
-          <!-- stop recording button -->
-          <p><button id="btnStop">Stop</button></p>
+      <nav class=“navbar” id=“create-navbar” style="height: 80px;">
+        <a class=“navbar-brand” style="font-family: Libre Baskerville, serif;padding-left: 100px;padding-top: 15px;font-size:
+          35px;padding-top: 11px;"><b>Event Booth</b></a>
+        <form class=“form-inline”></form>
+        <a class=“nav” href=“/”
+          style="padding-right: 9px; padding-left: 841px; padding-left: 1230px; font-size: 18px;color:black;">Home</a>
+        <a class=“nav” href=“#” style="padding-right: 100px; padding-left: 4px;font-size: 18px;color:black;">Login</a>
+        </form>
+      </nav>
+  
+  
+  
+      <div class="card"
+        style="width: 100%; padding-left: 200px; padding-right: 200px; margin: 0 auto; background-color: #F2F0EF;">
+        <div class="card-body">
+        <div><h1>Welcome ${req.params.name}, record a video</h1></div>
+          <h5 class="card-title" ; style="text-align: center;">Record Your Message Now</h5>
+          <div id="test" style="display: none" text-align=center;>Recording in Progress</div>
+          <p class="card-text"></p>
+          <div id="camera-view-1" style="display: inline;" width="200px;">
+            <!-- Displays what the webcam is seeing -->
+            <video id="videoCapture" autoplay="" style="
+                width: 1000px;
+                height: 520px;
+                "></video>
+  
+            <div class="container" id="Recording-Buttons" style="padding-top: 20px;text-align: center;">
+              <!-- start recording button -->
+              <button id="btnStart" style="background-color:#FFC300;">Record</button>
+              <!-- stop recording button -->
+              <button id="btnStop" style="background-color:#FFC300;">Stop</button>
+            </div>
+  
+  
+          </div>
+  
+          <div id="camera-view-2" style="display: none;">
+            <!-- Displays the captured recording -->
+            <video id="videoDisplay" style="
+            width: 1000px;
+            height: 520px;
+            " controls></video>
+            <!-- will eventually send to database - still working on it -->
+            <div class="container" id="Save-Buttons" style="padding-top: 20px;text-align: center;">
+              <button id="btnSave" style="background-color:#FFC300;">Save</button>
+              <!-- do over (starts recording process again) -->
+              <button id="btnRedo" style="background-color:#FFC300;">Redo</button>
+            </div>
+          </div>
         </div>
+      </div>
   
-        <div id="camera-view-2" style="display: none;">
-          <!-- Displays the captured recording -->
-          <video id="videoDisplay" controls></video>
-          <!-- will eventually send to database - still working on it -->
-          <p><button id="btnSave">Save</button></p>
-          <!-- do over (starts recording process again) -->
-          <p><button id="btnRedo">Redo</button></p>
-        </div>
+    </main>
   
-        <div id="testBlob">
-          <video id="blobDisplay" controls></video>
-        </div>
-        <!-- <form>
-          <input type="file" name="videoFile">
-        </form> -->
-      </main>
+    <script src="/js/webcam.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"></script>
+  </body>
   
-      <script src="/js/webcam.js" type="text/javascript"></script>
-    </body>
   </html>
   `
  res.send(html);
@@ -101,6 +134,11 @@ router.get('/:id/:name/:eventid', function(req, res) {
 router.get('/:id/:name/js/webcam.js', function(req, res) {
 res.send(path.join(__dirname, "../public/js/webcam.js"))
 })
+
+function shareUser(user) {
+  console.log(user);
+  console.log("call post function to amazon server, sending video and user object if we wanted");
+}
 
 //Multer, set up destination for file
 var storage = multer.diskStorage({
