@@ -180,7 +180,7 @@ body {
 
 #progressbar li {
     list-style-type: none;
-    color: white;
+    color: grey;
     text-transform: uppercase;
     font-size: 9px;
     width: 33.33%;
