@@ -101,7 +101,7 @@ router.get('/:id/:name/:eventid', function(req, res) {
 router.get('/:id/:name/js/webcam.js', function(req, res) {
 res.send(path.join(__dirname, "../public/js/webcam.js"))
 })
-
+//my change
 //Multer, set up destination for file
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
