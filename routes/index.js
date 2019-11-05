@@ -184,7 +184,7 @@ router.post('/uploadaws', upload.any(),  function(req, res) {
 });
 //Path to get keys
 router.get('/getvidsrcs', function(req, res, next) {
-  const urls = keyArr.map(x => "https://event-booth-bucket.s3-us-west-2.amazonaws.com/" + x);  
+  const urls = keyArr.map(key => "https://event-booth-bucket.s3-us-west-2.amazonaws.com/" + key);  
   console.log(urls)
 res.send(urls)
 });
@@ -224,10 +224,11 @@ async function sendemail(){
 let emailData = await db.email_invite.findAll({})
     
  emailData = JSON.parse(JSON.stringify(emailData));
-    
+let apiKey = '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'
+
 for( let i = 0; i < emailData.length; i++){
 console.log(emailData[i].invite_email)
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  sgMail.setApiKey(apiKey);
 const msg = {
   
   to: emailData[i].invite_email,
