@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
   
     //When submit button is clicked
@@ -37,6 +38,7 @@ $(document).ready(function() {
     // This function deletes a Recipient when the user clicks the delete button
     function deleteRecipient(event) {
       event.stopPropagation();
+      event.preventDefault()
       const id = $(this).data("id");
       $.ajax({
         method: "DELETE",
@@ -46,15 +48,16 @@ $(document).ready(function() {
   
     // This function constructs a recipient list item
     function createNewList(recipient) {
+      
       var $newRecipient = $(
         [
           "<li>",
           recipient.invite_name,
-          "<br>",
-          "<span>",
+          "<span class = 'spacer'>","</span>", 
+          "<span  class = 'spacer'>",
           recipient.invite_email,
           "</span>",
-          "<button class='delete btn btn-danger'>x</button>",
+          "<button class='delete btn btn-secondary'>x</button>",
           "</li>",
           "<br>"
         ].join("")
@@ -82,5 +85,13 @@ $(document).ready(function() {
       $("#new-email").val("");
   
     }
+
+    $("#btnSendEmail").click(function(){
+      $.get("/sendemail",function(data, status){
+        console.log("sent")
+      })
+    });
   });
+
+  
   
