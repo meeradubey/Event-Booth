@@ -19,6 +19,8 @@ var photoBucket = new AWS.S3({
   }
 })
 
+var user ={}
+
 
 // const BUCKET_NAME = 'llamarushstestbucket';
 // const IAM_USER_KEY = 'AKIAWY2KH2UONZBNL332';
@@ -37,7 +39,7 @@ res.send("woot")
 
 //Path to recieve email
 router.get('/:id/:name/:eventid', function(req, res) {
-  const user = {
+   user = {
     emailID: req.params.id,
     Name: req.params.name,
     eventID: req.params.eventid
@@ -115,9 +117,7 @@ router.get('/:id/:name/:eventid', function(req, res) {
     </main>
   
     <script src="/js/webcam.js" type="text/javascript"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-      crossorigin="anonymous"></script>
+   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
       integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
       crossorigin="anonymous"></script>
@@ -158,6 +158,7 @@ var type = upload.single('blobby.webm');
 
 router.post('/uploadaws', upload.any(),  function(req, res) {
   console.log(req.files[0]);
+  console.log(user)
   fs.writeFileSync(path.join(__dirname, '/routesUploads/videotest.webm'), req.files[0].buffer);
 //  console.log(req.file)
   uploadToS3(req.file)
@@ -194,7 +195,7 @@ function uploadToS3(file) {
           ACL: 'public-read', 
           Body:fs.createReadStream("./routes/routesUploads/videotest.webm"), 
           // file upload by below name
-          Key: 'test.mp4',
+          Key: `${user.emailID}${user.Name}${user.eventID}.mp4`,
           ContentType: 'application/octet-stream' // force download if it's accessed as a top location
   },(err, response)=>{
       console.log(err, response)

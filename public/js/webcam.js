@@ -97,7 +97,7 @@ navigator.mediaDevices
   
       console.log("newMessage: ", newMessage);
   
-      $.post("/api/messages", newMessage, messageSent);
+     // $.post("/api/messages", newMessage, messageSent);
 //Lawrence's additions
     
      // console.log( new Blob(chunks, { type: "video/mp4;" }))
