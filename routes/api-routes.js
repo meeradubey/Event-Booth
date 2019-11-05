@@ -97,3 +97,15 @@ module.exports = function(app) {
     });
 
 };
+
+
+  // POST route for saving a new user
+  // app.post("/api/signup", function(req, res) {
+  //   const { id, createdAt, updatedAt, ...body } = req.body;
+  //   db.user.create(body).then(results => {
+  //     res.json(results);
+  //   }).catch(err => {
+  //     console.log(err);
+  //     res.sendStatus(500);
+  //   });
+  // });

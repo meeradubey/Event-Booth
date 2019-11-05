@@ -22,14 +22,53 @@
       style="font-family: 'Libre Baskerville', serif;padding-left: 100px;font-size: 35px;"><b>Event Booth</b></a>
     <form class="form-inline">
       <a class="nav" href="#" style="font-size: 18px;color:black;">Home</a>
-      <a class="nav" href="#" style="padding-right: 100px;padding-left: 15px;font-size: 18px;color:black;">Login</a>
+      <a class="nav" href="#"data-toggle="modal" data-target="#loginModal" style="padding-right: 100px;padding-left: 15px;font-size: 18px;color:black;">Login</a>
     </form>
   </nav>
+
+<!-- modal -->
+
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">Event Login</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Email address</label>
+              <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">Password</label>
+              <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+            </div>
+            <div class="form-group form-check">
+              <input type="checkbox" class="form-check-input" id="exampleCheck1">
+              <label class="form-check-label" for="exampleCheck1">Save Login</label>
+            </div>
+            <button type="submit" class="btn btn-warning">Submit</button>
+          </form>
+      
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>
+</div>
 
   <!-- stepper -->
 
   <!-- MultiStep Form -->
-<div class="row">
+
+<div class="row" style="justify-content: center;padding-top: 5%;font-family: 'Open Sans', sans-serif ;">
     <div class="col-md-6 col-md-offset-3">
         <form id="msform">
             <!-- progressbar -->
@@ -61,40 +100,22 @@
                 <input type="hidden" id="event_id" value="1" />
                 <input type="text" id="new-recipient" name="fname" placeholder="Attendee Name"/>
                 <input type="text" id="new-email" name="email" placeholder="Attendee Email"/>
-                <button type="button" id="btnSubmit" class="btn btn-warning">Add Attendee</button>
+                <!-- Lawrence added stuff here -->
+                <div id = "recipients-list"></div>
                 <p>Attendees:<span id="invite-count">0</span></p>
-                <ol id="recipients-list">
-                    <!-- Display Recipient Name and Email List -->
-                    <li>Name<br><span>Email</span></li><br>
-                  </ol>
-
+                <input type="button" id="btnSubmit" name="" class=" action-button" value="Add">
+                <input type="button" id="btnSendEmail" name="" class=" action-button" value="Send Emails">
+                
+                
+                
+                  
             </fieldset>
         </form>
-       
+
     </div>
 </div>
 <!-- /.MultiStep Form -->
 
-
-
-  <!-- Email Recipients Form -->
-  <form id="get-recipients">
-    <input type="hidden" id="event_id" value="1" />
-    <label for="new-recipient">Add Recipient's Name</label>
-    <input type="text" id="new-recipient" />
-    <label for="new-email">Add Email:</label>
-    <input type="email" id="new-email" />
-    <button id="btnSubmit" type="submit">Add Email Recipient</button>
-  </form>
-
-  <!-- recipients form -->
-  <div>
-    <p>Recipients: <span id="invite-count">0</span></p>
-    <ol id="recipients-list">
-      <!-- Display Recipient Name and Email List -->
-      <li>Name<br><span>Email</span></li><br>
-    </ol>
-  </div>
 
   <!-- form script -->
 <script>
@@ -184,9 +205,7 @@ $(".submit").click(function(){
 </script>
  
   <!-- Custom Script -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
     integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
     crossorigin="anonymous"></script>
