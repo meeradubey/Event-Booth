@@ -97,7 +97,7 @@ navigator.mediaDevices
   
       console.log("newMessage: ", newMessage);
   
-     // $.post("/api/messages", newMessage, messageSent);
+      $.post("/api/messages", newMessage, messageSent);
 //Lawrence's additions
     
      // console.log( new Blob(chunks, { type: "video/mp4;" }))
@@ -116,21 +116,6 @@ navigator.mediaDevices
       //   $blobDisplay.src = videoURL;
       // });
       
-      var user = {
-        id:  $('#reqId').text(),
-        name: $('#reqName').text(),
-        eventId: $('#reqEventId').text()
-      }
-      console.log(user)
-      fetch('/getUserStuff',
-      {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-      },
-        body:  JSON.stringify({user
-      })
-    })
       
       fetch('/uploadaws',
       {
