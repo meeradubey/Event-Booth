@@ -7,6 +7,9 @@ var multer  = require('multer');
 const db = require("../models");
 var FileReader = require('filereader');
 var path = require("path");
+var fluent_ffmpeg = require("fluent-ffmpeg");
+const concat = require('concat');
+
 AWS.config.update({
   accessKeyId: "AKIAWY2KH2UONZBNL332",
   secretAccessKey: "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",
@@ -179,10 +182,10 @@ router.post('/uploadaws', upload.any(),  function(req, res) {
 
   res.send("woot woot")
 });
-//Path to download from s3
-router.get('/downloadaws', function(req, res, next) {
-  downloadaws();
-
+//Path to get keys
+router.get('/getVidSrcs', function(req, res, next) {
+  const urls = keyArr.map(x => "https://event-booth-bucket.s3-us-west-2.amazonaws.com/" + x);  
+  console.log(urls)
 res.send("gucci")
 });
 
@@ -238,10 +241,12 @@ sgMail.send(msg);
 }
 
 function downloadaws(){
-  console.log(keyArr)
-  
+  //console.log(keyArr)
+  let filePathArr = [];
+  const videoCompilation = [];
   for (var i = 0; i < keyArr.length; i++){
     let filePath = `./routes/routesDownloads/${keyArr[i]}`
+    filePathArr.push(filePath)
     console.log(filePath)
   var s3 = new AWS.S3();
 s3.getObject(
@@ -254,16 +259,32 @@ s3.getObject(
       // do something with data.Body
     // console.log(data)
       console.log(data.Body)
-      fs.writeFile(filePath, data.Body, function(err){
+      let newVid = data.Body;
+      videoCompilation.push(newVid);
+
+      fs.appendFile(filePath, data.Body, function(err){
         if(err)
+
           console.log(err.code, "-", err.message);
     
         return null;   
       }); 
     }
   }
-)};
-}
+)}
+ 
+    let outputFIle = `./routes/routesDownloads/comp.webm`
+    
+concat(filePathArr, outputFIle)
+// console.log("video compilation: ", videoCompilation);
+// convertBuffer(videoCompilation);
+
+// function convertBuffer(data) {
+//   let buffer = Buffer.from(data);
+//   let arraybuffer = Uint8Array.from(buffer).buffer;
+//   console.log("arraybuffer", arraybuffer);
+ }
+
 
 function makeANewBucket (){
   var params = {
