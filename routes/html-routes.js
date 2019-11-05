@@ -23,9 +23,15 @@ module.exports = function(app) {
     res.sendFile(path.join(__dirname, "../public/emails.html"));
   });
 
-  // webcam route loads webcam.html
-  app.get("/webcam", function(req, res) {
+  // webcam route loads webcam.h:tml
+  app.get("/webcam/:email_id/:name/:event_id", function(req, res) {
     res.sendFile(path.join(__dirname, "../public/webcam.html"));
   });
+
+    // event route loads event.html
+    app.get("/event", function(req, res) {
+      console.log("cat")
+      res.sendFile(path.join(__dirname, "../public/event.html"));
+    });
 
 };
