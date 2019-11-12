@@ -90,8 +90,20 @@ $(document).ready(function() {
       $.get("/sendemail",function(data, status){
         console.log("sent")
       })
+
+      
     });
-  });
+
+    // $("#btnGetVids").click(function(){
+    //   $.get("/vids",function(data, status){
+    //     console.log("sent")
+    //   })
+
+      
+    });
+
+
+  
 
   
   

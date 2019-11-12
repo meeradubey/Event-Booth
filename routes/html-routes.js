@@ -17,6 +17,10 @@ module.exports = function(app) {
     res.sendFile(path.join(__dirname, "../public/index.html"));
   });
 
+  app.get("/vids", function(req, res) {
+    console.log("cat")
+    res.sendFile(path.join(__dirname, "../public/showVids.html"));
+  });
   // emails route loads emails.html
   app.get("/emails", function(req, res) {
     console.log("cat")

@@ -7,6 +7,9 @@ var multer  = require('multer');
 const db = require("../models");
 var FileReader = require('filereader');
 var path = require("path");
+var fluent_ffmpeg = require("fluent-ffmpeg");
+const concat = require('concat');
+
 AWS.config.update({
   accessKeyId: "AKIAWY2KH2UONZBNL332",
   secretAccessKey: "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",
@@ -18,6 +21,9 @@ var photoBucket = new AWS.S3({
       Bucket: 'event-booth-bucket'
   }
 })
+
+var user ={}
+var keyArr =[]
 
 
 // const BUCKET_NAME = 'llamarushstestbucket';
@@ -37,11 +43,7 @@ res.send("woot")
 
 //Path to recieve email
 router.get('/:id/:name/:eventid', function(req, res) {
-  const user = {
-    emailID: req.params.id,
-    Name: req.params.name,
-    eventID: req.params.eventid
-  };
+  
 
   module.exports = user;
   
@@ -55,6 +57,10 @@ router.get('/:id/:name/:eventid', function(req, res) {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Webcam</title>
+    <script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
   </head>
   
   <body>
@@ -112,12 +118,13 @@ router.get('/:id/:name/:eventid', function(req, res) {
         </div>
       </div>
   
+      <div id = "reqId" style="display:none;">${req.params.id}</div>
+      <div id = "reqName" style="display:none;">${req.params.name}</div>
+      <div id = "reqEventId" style="display:none;">${req.params.eventid}</div>
     </main>
   
     <script src="/js/webcam.js" type="text/javascript"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-      crossorigin="anonymous"></script>
+   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
       integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
       crossorigin="anonymous"></script>
@@ -139,6 +146,15 @@ function shareUser(user) {
   console.log(user);
   console.log("call post function to amazon server, sending video and user object if we wanted");
 }
+//Get user data from front end
+router.post('/getUserStuff', function(req, res){
+console.log("Req:", req.body.user.id)
+user = {
+  emailID: req.body.user.id,
+  Name: req.body.user.name,
+  eventID: req.body.user.eventId
+};
+})
 
 //Multer, set up destination for file
 var storage = multer.diskStorage({
@@ -158,6 +174,7 @@ var type = upload.single('blobby.webm');
 
 router.post('/uploadaws', upload.any(),  function(req, res) {
   console.log(req.files[0]);
+  //console.log(user)
   fs.writeFileSync(path.join(__dirname, '/routesUploads/videotest.webm'), req.files[0].buffer);
 //  console.log(req.file)
   uploadToS3(req.file)
@@ -165,19 +182,22 @@ router.post('/uploadaws', upload.any(),  function(req, res) {
 
   res.send("woot woot")
 });
-//Path to download from s3
-router.get('/downloadaws/:videoName', function(req, res, next) {
-  downloadaws(req.params.videoName);
-let file = require("./routesDownloads/video.mp4")
-res.send(file)
+//Path to get keys
+router.get('/getvidsrcs', function(req, res, next) {
+  const urls = keyArr.map(key => "https://event-booth-bucket.s3-us-west-2.amazonaws.com/" + key); 
+  keyArr.length = 0 
+  console.log(urls)
+res.send(urls)
 });
 
 router.get('/downloadvid', function(req, res, next) {
   
-let file = require("./routesUploads/blobby.mp4")
+let file = require("./routesUploads/blobby.webm")
 console.log(file)
 res.send(file)
 });
+
+
 
 //Path to make new bucket
 router.get('/newbucket', function(req, res, next) {
@@ -188,13 +208,13 @@ res.send("hopefully it downloaded")
 
 
 function uploadToS3(file) {
-  
-  
+  keyArr.push(`${user.emailID}${user.Name}${user.eventID}.webm`)
+  console.log(keyArr)
   photoBucket.upload({
           ACL: 'public-read', 
           Body:fs.createReadStream("./routes/routesUploads/videotest.webm"), 
           // file upload by below name
-          Key: 'test.mp4',
+          Key: `${user.emailID}${user.Name}${user.eventID}.webm`,
           ContentType: 'application/octet-stream' // force download if it's accessed as a top location
   },(err, response)=>{
       console.log(err, response)
@@ -205,26 +225,34 @@ async function sendemail(){
 let emailData = await db.email_invite.findAll({})
     
  emailData = JSON.parse(JSON.stringify(emailData));
-    
+let apiKey = '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'
+
 for( let i = 0; i < emailData.length; i++){
 console.log(emailData[i].invite_email)
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  sgMail.setApiKey(apiKey);
 const msg = {
   
   to: emailData[i].invite_email,
   from: 'l.rush7@gmail.com',
   subject: 'here is the link',
   // text: `localhost:3000/${emailData[i].invite_name}/${emailData[i].event_id}`,
-  html: `http://localhost:8080/${emailData[i].id}/${emailData[i].invite_name}/${emailData[i].event_id}`,
+  html: `https://fierce-inlet-64374.herokuapp.com/${emailData[i].id}/${emailData[i].invite_name}/${emailData[i].event_id}`,
 };
 sgMail.send(msg);
 }
 }
 
 function downloadaws(){
+  //console.log(keyArr)
+  let filePathArr = [];
+  const videoCompilation = [];
+  for (var i = 0; i < keyArr.length; i++){
+    let filePath = `./routes/routesDownloads/${keyArr[i]}`
+    filePathArr.push(filePath)
+    console.log(filePath)
   var s3 = new AWS.S3();
 s3.getObject(
-  { Bucket: "event-booth-bucket", Key: "bobsBurgers.png" },
+  { Bucket: "event-booth-bucket", Key: `${keyArr[i]}` },
   function (error, data) {
     if (error != null) {
       console.log("Failed to retrieve an object: " + error);
@@ -233,16 +261,32 @@ s3.getObject(
       // do something with data.Body
     // console.log(data)
       console.log(data.Body)
-      fs.writeFile('./routes/routesDownloads/video.mp4', data.Body, function(err){
+      let newVid = data.Body;
+      videoCompilation.push(newVid);
+
+      fs.appendFile(filePath, data.Body, function(err){
         if(err)
+
           console.log(err.code, "-", err.message);
     
         return null;   
       }); 
     }
   }
-);
-}
+)}
+ 
+    let outputFIle = `./routes/routesDownloads/comp.webm`
+    
+concat(filePathArr, outputFIle)
+// console.log("video compilation: ", videoCompilation);
+// convertBuffer(videoCompilation);
+
+// function convertBuffer(data) {
+//   let buffer = Buffer.from(data);
+//   let arraybuffer = Uint8Array.from(buffer).buffer;
+//   console.log("arraybuffer", arraybuffer);
+ }
+
 
 function makeANewBucket (){
   var params = {
